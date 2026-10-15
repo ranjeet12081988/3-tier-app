@@ -1,0 +1,31 @@
+name: Deploy
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options: [ staging, production ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'production' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Placeholder — show deploy plan
+        run: |
+          echo "🚀 Deploy would run here"
+          echo "Ref:     ${{ github.ref }}"
+          echo "SHA:     ${{ github.sha }}"
+          echo "Env:     ${{ github.event.inputs.environment || 'production' }}"
+          echo "Image:   ghcr.io/${{ github.repository }}:latest"
