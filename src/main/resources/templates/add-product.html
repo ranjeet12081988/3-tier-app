@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add Product</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        input, textarea { width: 300px; padding: 8px; margin: 5px; }
+        button { padding: 10px 20px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>➕ Add New Product</h1>
+    <form th:action="@{/products/add}" th:object="${product}" method="post">
+        <input type="text" th:field="*{name}" placeholder="Name" required><br>
+        <textarea th:field="*{description}" placeholder="Description"></textarea><br>
+        <input type="number" th:field="*{price}" placeholder="Price" step="0.01" required><br>
+        <input type="number" th:field="*{quantity}" placeholder="Quantity" required><br>
+        <input type="text" th:field="*{category}" placeholder="Category"><br>
+        <button type="submit">💾 Save Product</button>
+        <a href="/products">Cancel</a>
+    </form>
+</body>
+</html>

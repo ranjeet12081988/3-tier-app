@@ -1,34 +1,49 @@
-# Build
+# ===== Build output =====
 target/
 build/
+out/
 *.class
 *.jar
+*.war
 
-# Logs
+# ===== Logs =====
 *.log
+build.log
+logs/
 
-# IDE
+# ===== IDE =====
 .idea/
 *.iml
 .vscode/
+*.swp
+.settings/
+.project
+.classpath
 
-# OS
+# ===== OS =====
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# Secrets
+# ===== Backup files =====
+*.bak
+*.backup
+*.orig
+*.tmp
+
+# ===== Secrets (CRITICAL) =====
 .env
 .env.*
-!.env.example
 *.pem
 *.key
 application-local.properties
 application-secret.properties
 secrets.yml
 
-# Backups
-*.bak
-*.backup
-
-# Docker
+# ===== Docker =====
 docker-compose.override.yml
+
+# ===== Maven wrapper =====
+.mvn/wrapper/maven-wrapper.jar
+
+!.env.example
