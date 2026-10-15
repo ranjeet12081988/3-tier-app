@@ -1,0 +1,34 @@
+# Build
+target/
+build/
+*.class
+*.jar
+
+# Logs
+*.log
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+application-local.properties
+application-secret.properties
+secrets.yml
+
+# Backups
+*.bak
+*.backup
+
+# Docker
+docker-compose.override.yml
