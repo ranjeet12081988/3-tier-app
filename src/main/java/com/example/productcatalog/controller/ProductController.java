@@ -1,5 +1,9 @@
 package com.example.productcatalog.controller;
 
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.example.productcatalog.entity.Product;
 import com.example.productcatalog.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,5 +155,27 @@ public class ProductController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getStats() {
         return ResponseEntity.ok(productService.getStatistics());
+    }
+
+    @GetMapping("/upload")
+    public String showUploadForm() {
+        return "upload";
+    }
+
+    @PostMapping("/upload")
+    public String handleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+        if (file.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Please select a CSV file to upload.");
+            return "redirect:/products/upload";
+        }
+
+        try {
+            int count = productService.saveProductsFromCsv(file.getInputStream());
+            redirectAttributes.addFlashAttribute("message", "Successfully imported " + count + " products from CSV!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to upload file: " + e.getMessage());
+        }
+
+        return "redirect:/products";
     }
 }
