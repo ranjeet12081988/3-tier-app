@@ -1,0 +1,16 @@
+﻿version: '3.8'
+services:
+  airflow:
+    image: apache/airflow:2.9.0
+    container_name: airflow
+    command: standalone
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=sqlite:////opt/airflow/airflow.db
+      - AIRFLOW__WEBSERVER__WEB_SERVER_HOST=0.0.0.0
+    ports:
+      - "8085:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
