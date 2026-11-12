@@ -1,5 +1,5 @@
 resource "docker_image" "app" {
-  name         = "product-catalog:${var.app_version}"
+  name         = "ranjeet1988/3-tier-app:${var.app_version}"
   keep_locally = true 
 }
 
@@ -15,7 +15,8 @@ resource "docker_container" "app" {
     "SPRING_DATASOURCE_URL=jdbc:postgresql://${var.db_host}:5432/product_catalog",
     "SPRING_DATASOURCE_USERNAME=postgres",
     "SPRING_DATASOURCE_PASSWORD=${var.db_password}",
-    "SERVER_PORT=9090" 
+    "SERVER_PORT=9090",
+    "OLLAMA_BASE_URL=http://host.docker.internal:11434"
   ]
 
   ports {

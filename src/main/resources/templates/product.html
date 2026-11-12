@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Catalog</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background-image: url('/images/bg.jpg'); background-size: cover; background-position: center; background-attachment: fixed; background-color: #121212; }
+        .container.mt-4 { background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 20px; padding: 30px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.3); }
+        .navbar { background-color: rgba(13, 110, 253, 0.85) !important; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); }
+        .table, .card { background-color: white !important; }
+        .stat-card { border-radius: 10px; padding: 20px; color: white; }
+        .stat-card.primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .stat-card.success { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .stat-card.warning { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/products"><i class="bi bi-box-seam"></i> Product Catalog</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/products"><i class="bi bi-list"></i> Products</a>
+                <a class="nav-link" href="/products/add"><i class="bi bi-plus-circle"></i> Add Product</a>
+                <a class="nav-link" href="/products/api" target="_blank"><i class="bi bi-code-square"></i> API</a>
+                <a class="nav-link" href="/products/upload"><i class="bi bi-upload"></i> Upload CSV</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle"></i> <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-3"><div class="stat-card primary"><h3 th:text="${statistics.totalProducts}">0</h3><p>Total Products</p></div></div>
+            <div class="col-md-3"><div class="stat-card warning"><h3 th:text="${statistics.lowStockProducts}">0</h3><p>Low Stock</p></div></div>
+            <div class="col-md-3"><div class="stat-card success"><h3 th:text="${statistics.totalInventoryValue}">$0</h3><p>Inventory Value</p></div></div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <form th:action="@{/products}" method="get" class="row g-3">
+                    <div class="col-md-4"><input type="text" name="search" class="form-control" placeholder="Search products..." th:value="${search}"></div>
+                    <div class="col-md-3">
+                        <select name="category" class="form-select">
+                            <option value="">All Categories</option>
+                            <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}" th:selected="${cat == category}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-2"><button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> Search</button></div>
+                    <div class="col-md-2"><a href="/products" class="btn btn-outline-secondary w-100"><i class="bi bi-x-circle"></i> Clear</a></div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr><th>SKU</th><th>Name</th><th>Category</th><th>Price</th><th>Quantity</th><th>Status</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="product : ${products}">
+                                <td th:text="${product.sku}">SKU</td>
+                                <td><strong th:text="${product.name}">Name</strong><br><small class="text-muted" th:text="${product.description}">Description</small></td>
+                                <td><span class="badge bg-info" th:text="${product.category}">Category</span></td>
+                                <td th:text="'$' + ${product.price}">$0.00</td>
+                                <td><span th:classappend="${product.quantity < 10} ? 'text-danger fw-bold' : ''" th:text="${product.quantity}">0</span></td>
+                                <td>
+                                    <span th:if="${product.quantity > 10}" class="badge bg-success">In Stock</span>
+                                    <span th:if="${product.quantity > 0 and product.quantity <= 10}" class="badge bg-warning text-dark">Low Stock</span>
+                                    <span th:if="${product.quantity == 0}" class="badge bg-danger">Out of Stock</span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
+                                    <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-sm btn-danger" onclick="return confirm('Delete?')"><i class="bi bi-trash"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Chat Widget -->
+        <!-- AI Chat Widget (Collapsible) -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1000;">
+        
+        <!-- The Chat Window (Hidden by default) -->
+        <div id="chat-window" class="card shadow-lg border-0 mb-3" style="display: none; width: 350px; background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-robot"></i> AI Assistant</span>
+                <button class="btn btn-sm btn-outline-light" onclick="toggleChat()"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div class="card-body" id="chat-body" style="height: 250px; overflow-y: auto; font-size: 0.9rem;">
+                <div class="text-muted text-center mt-5">Ask me about your products!</div>
+            </div>
+            <div class="card-footer bg-white border-top-0">
+                <div class="input-group">
+                    <input type="text" id="chat-input" class="form-control" placeholder="Type a question...">
+                    <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- The Floating Button (Visible by default) -->
+        <button id="chat-toggle-btn" class="btn btn-primary rounded-circle shadow-lg" style="width: 60px; height: 60px; float: right;" onclick="toggleChat()">
+            <i class="bi bi-robot fs-3"></i>
+        </button>
+
+    </div>
+
+    <script>
+        // Function to toggle the chat window
+        function toggleChat() {
+            const chatWindow = document.getElementById('chat-window');
+            const toggleBtn = document.getElementById('chat-toggle-btn');
+            
+            if (chatWindow.style.display === 'none') {
+                chatWindow.style.display = 'block';
+                toggleBtn.style.display = 'none'; // Hide the round button
+            } else {
+                chatWindow.style.display = 'none';
+                toggleBtn.style.display = 'block'; // Show the round button
+            }
+        }
+
+        // --- YOUR EXISTING AI LOGIC (getAuthToken, sendMessage) GOES HERE ---
+        async function getAuthToken() { /* ... */ }
+        async function sendMessage() { /* ... */ }
+        
+        // ... (Keep your existing JavaScript for the AI) ...
+    </script>
+
+    <script>
+                async function getAuthToken() {
+            // 1. Check if we have a token saved
+            let token = localStorage.getItem('jwt_token');
+            if (token) return token;
+
+            // 2. If no token, FORCE the user to the login page
+            window.location.href = '/login'; 
+            return null;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const chatBody = document.getElementById('chat-body');
+            const question = input.value.trim();
+            if (!question) return;
+
+            chatBody.innerHTML += `<div class="mb-2 text-end"><span class="badge bg-primary text-wrap text-start" style="max-width: 80%;">${question}</span></div>`;
+            input.value = '';
+            chatBody.scrollTop = chatBody.scrollHeight;
+
+            const loadingId = 'loading-' + Date.now();
+            chatBody.innerHTML += `<div id="${loadingId}" class="mb-2"><span class="badge bg-secondary">Thinking...</span></div>`;
+            chatBody.scrollTop = chatBody.scrollHeight;
+
+            try {
+                const token = await getAuthToken();
+                if (!token) throw new Error("Could not get token.");
+
+                const response = await fetch(`/api/ai/ask?question=${encodeURIComponent(question)}`, { 
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                document.getElementById(loadingId).remove();
+                
+                if (response.ok) {
+                    const text = await response.text();
+                    chatBody.innerHTML += `<div class="mb-2"><span class="badge bg-success text-wrap text-start" style="max-width: 80%;">${text}</span></div>`;
+                } else {
+                    chatBody.innerHTML += `<div class="mb-2"><span class="badge bg-danger">Error: ${response.status}</span></div>`;
+                }
+            } catch (error) {
+                const loader = document.getElementById(loadingId);
+                if (loader) loader.remove();
+                chatBody.innerHTML += `<div class="mb-2"><span class="badge bg-danger">Failed: ${error.message}</span></div>`;
+            }
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        document.getElementById('chat-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>

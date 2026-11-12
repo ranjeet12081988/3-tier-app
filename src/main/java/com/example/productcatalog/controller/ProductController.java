@@ -2,7 +2,6 @@ package com.example.productcatalog.controller;
 
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.productcatalog.entity.Product;
 import com.example.productcatalog.service.ProductService;
@@ -15,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
@@ -47,7 +45,7 @@ public class ProductController {
         model.addAttribute("categories", productService.getAllCategories());
         model.addAttribute("statistics", productService.getStatistics());
 
-        return "products";
+        return "product"; // <--- FIXED: Removed the 's'
     }
 
     // REST API - Get all products with pagination
@@ -178,4 +176,5 @@ public class ProductController {
 
         return "redirect:/products";
     }
+
 }

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Product Catalog</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url('/images/bg.jpg'); 
+            background-size: cover; background-position: center; height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            background-color: #121212;
+        }
+        .login-card {
+            background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px);
+            padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            width: 100%; max-width: 400px;
+        }
+        .btn-login { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="text-center mb-4">
+            <i class="bi bi-box-seam text-primary" style="font-size: 3rem;"></i>
+            <h2 class="mt-2">Product Catalog</h2>
+            <p class="text-muted">Sign in to continue</p>
+        </div>
+        <form id="loginForm">
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" value="admin" required>
+            </div>
+            <div class="mb-4">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" value="admin123" required>
+            </div>
+            <div id="error-msg" class="alert alert-danger d-none"></div>
+            <button type="submit" class="btn btn-primary w-100 btn-login py-2">Login</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const err = document.getElementById('error-msg');
+            err.classList.add('d-none');
+            
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        username: document.getElementById('username').value, 
+                        password: document.getElementById('password').value 
+                    })
+                });
+                
+                if (res.ok) {
+                    const token = await res.text();
+                    localStorage.setItem('jwt_token', token);
+                    window.location.href = '/products';
+                } else {
+                    err.textContent = "Invalid username or password.";
+                    err.classList.remove('d-none');
+                }
+            } catch (e) {
+                err.textContent = "Connection error.";
+                err.classList.remove('d-none');
+            }
+        });
+    </script>
+</body>
+</html>

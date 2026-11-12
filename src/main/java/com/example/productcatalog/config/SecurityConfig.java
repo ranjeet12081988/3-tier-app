@@ -24,11 +24,17 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+                // 1. Completely disable Spring's built-in form login
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/products", "/products/api/**", "/images/**", "/css/**", "/", "/error")
-                        .permitAll()
+                        // 2. Explicitly permit the /login page so the ProductController can serve it
+                        .requestMatchers("/login", "/css/**", "/images/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/ai/**").authenticated() // Locks the AI endpoint!
+                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/", "/products", "/products/api/**", "/error").permitAll()
+                        // 3. Lock down the AI
+                        .requestMatchers("/api/ai/**").authenticated()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
