@@ -1,7 +1,6 @@
 
 # The version of the Spring Boot app to deploy
 app_version = "1.0.3"
-
 # The password for the PostgreSQL database
 db_password = 1234
 

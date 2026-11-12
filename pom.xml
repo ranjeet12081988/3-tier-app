@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -32,7 +32,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-        </dependencies>
+                <!-- Micrometer Prometheus Registry (Exposes /actuator/prometheus) -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>1.12.5</version>
+        </dependency>
+    </dependencies>
     </dependencyManagement>
 
     <!-- Repositories (Good to keep, though M6 is on Central) -->
@@ -102,25 +108,10 @@
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-jcache</artifactId>
         </dependency>
-       <!-- <dependency>
-            <groupId>org.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
-            <version>3.10.8</version>
-        </dependency>
+       <!-- 
          -->
          <!-- Existing Ehcache dependency -->
-        <dependency>
-        <groupId>org.ehcache</groupId>
-        <artifactId>ehcache</artifactId>
-    <version>3.10.8</version>
-    <exclusions>
-        <!-- Exclude the broken transitive JAXB dependency -->
-        <exclusion>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-runtime</artifactId>
-        </exclusion>
-    </exclusions>
-</dependency>
+        
 
 <!-- Add a stable, compatible version of JAXB runtime -->
 <dependency>
@@ -179,6 +170,19 @@
     <version>0.11.5</version>
     <scope>runtime</scope>
 </dependency>
+
+
+
+<!-- Add a stable version of JAXB -->
+
+<!-- Add a stable, compatible version of JAXB runtime -->
+
+            <!-- Micrometer Prometheus Registry (Exposes /actuator/prometheus) -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>1.12.5</version>
+        </dependency>
     </dependencies>
 
     <build>

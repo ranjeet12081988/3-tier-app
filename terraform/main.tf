@@ -31,3 +31,8 @@ module "minio" {
   source     = "./modules/minio"
   network_id = module.network.network_id
 }
+
+module "prometheus" {
+  source     = "./modules/prometheus"
+  network_id = module.network.network_id
+}
